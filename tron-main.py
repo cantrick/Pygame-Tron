@@ -48,9 +48,6 @@ def drawGame():
 		pygame.draw.line(screen, BLACK, [0,0+y_offset], [500,0+y_offset])
 		pygame.draw.line(screen, BLACK, [0+y_offset,0], [0+y_offset, 500])
 
-
-def checkCollision(sprite1,sprite2):
-	x=1
 	
 def createTrail(px, py):
 		p1Trail = Player(BLUE2,10,10)
@@ -59,23 +56,26 @@ def createTrail(px, py):
 		all_sprites_list.add(p1Trail)
 		block_list.add(p1Trail)
 
+
 def checkBounds():
 	if player1.rect.x > rbound:
-		player1.rect.x -= 10
+		player1.rect.x = rbound
 
 	if player1.rect.x < lbound:
-		player1.rect.x += 10
+		player1.rect.x = lbound
 
 	if player1.rect.y < ubound:
-		player1.rect.y += 10
+		player1.rect.y = ubound
 
 	if player1.rect.y > dbound:
-		player1.rect.y -= 10
+		player1.rect.y = dbound
 
-	return True
+	return False
+
 
 def mainLoop():
 	global done, p1_x, p1_y, p2_x, p2_y
+	inputMap = [False,False,False,False]
 
 	while not done:
 		randMove = random.randint(1,4)
@@ -87,12 +87,13 @@ def mainLoop():
 
 			if event.type == pygame.KEYDOWN:
 				if event.key == pygame.K_LEFT:
+					#check if player is out of bounds
+					checkBounds()
 					#move player left
 					player1.rect.x -= 10
 					#create a trail behind where the player was
 					createTrail(player1.rect.x+10, player1.rect.y)
-					#check if player is out of bounds
-					checkBounds()
+					inputMap = [True,False,False,False]
 					#check if there are collisions
 					blocks_hit_list = pygame.sprite.spritecollide(player1, block_list, False)
 					for block in blocks_hit_list:
@@ -100,44 +101,39 @@ def mainLoop():
 						if block.rect.x == player1.rect.x:
 							#move the player back right
 							player1.rect.x += 10
-						print("OK")
-						print(block.rect.x, " BLOICKS")
 
 				if event.key == pygame.K_RIGHT:
+					checkBounds()
 					player1.rect.x += 10
 					createTrail(player1.rect.x-10, player1.rect.y)
-					checkBounds()
+					inputMap = [False,True,False,False]
 					blocks_hit_list = pygame.sprite.spritecollide(player1, block_list, False)
 					for block in blocks_hit_list:
 						if block.rect.x == player1.rect.x:
 							player1.rect.x -= 10
-						print("OK")
-						print(block.rect.x, " BLOICKS")
 
 				if event.key == pygame.K_UP:
+					checkBounds()
 					player1.rect.y -= 10
 					createTrail(player1.rect.x, player1.rect.y+10)
-					checkBounds()
+					inputMap = [False,False,True,False]
 					blocks_hit_list = pygame.sprite.spritecollide(player1, block_list, False)
 					for block in blocks_hit_list:
 						if block.rect.y == player1.rect.y:
 							player1.rect.y += 10
-						print("OK")
-						print(block.rect.x, " BLOICKS")
 
 				if event.key == pygame.K_DOWN:
+					checkBounds()
 					player1.rect.y += 10
 					createTrail(player1.rect.x, player1.rect.y-10)
-					checkBounds()
+					inputMap = [False,False,False,True]
 					blocks_hit_list = pygame.sprite.spritecollide(player1, block_list, False)
 					for block in blocks_hit_list:
 						if block.rect.y == player1.rect.y:
 							player1.rect.y -= 10
-						print("OK")
-						print(block.rect.x, " BLOICKS")
 
 		#playerMove()
-		if checkBounds() == True:
+		'''if checkBounds() == True:
 			if randMove == 1:
 				player1.rect.x += 10
 				createTrail(player1.rect.x-10, player1.rect.y)
@@ -169,8 +165,42 @@ def mainLoop():
 				blocks_hit_list = pygame.sprite.spritecollide(player1, block_list, False)
 				for block in blocks_hit_list:
 					if block.rect.y == player1.rect.y:
-						player1.rect.y += 10
-					
+						player1.rect.y += 10'''
+		
+		#For human input, keep moving after button is pressed
+		if inputMap[0]:
+			checkBounds()
+			player1.rect.x -= 10
+			createTrail(player1.rect.x+10, player1.rect.y)
+			blocks_hit_list = pygame.sprite.spritecollide(player1, block_list, False)
+			for block in blocks_hit_list:
+				if block.rect.x == player1.rect.x:
+					player1.rect.x += 10
+		elif inputMap[1]:
+			checkBounds()
+			player1.rect.x += 10
+			createTrail(player1.rect.x-10, player1.rect.y)
+			blocks_hit_list = pygame.sprite.spritecollide(player1, block_list, False)
+			for block in blocks_hit_list:
+				if block.rect.x == player1.rect.x:
+					player1.rect.x -= 10
+		elif inputMap[2]:
+			checkBounds()
+			player1.rect.y -= 10
+			createTrail(player1.rect.x, player1.rect.y+10)
+			blocks_hit_list = pygame.sprite.spritecollide(player1, block_list, False)
+			for block in blocks_hit_list:
+				if block.rect.y == player1.rect.y:
+					player1.rect.y += 10
+		elif inputMap[3]:
+			checkBounds()
+			player1.rect.y += 10
+			createTrail(player1.rect.x, player1.rect.y-10)
+			blocks_hit_list = pygame.sprite.spritecollide(player1, block_list, False)
+			for block in blocks_hit_list:
+				if block.rect.y == player1.rect.y:
+					player1.rect.y -= 10
+
 		#Clear screen to white
 		screen.fill(WHITE)
 		drawGame()
