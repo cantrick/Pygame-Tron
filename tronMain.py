@@ -49,14 +49,12 @@ def resetBoard():
     for block in block_list:
         block_list.remove(block)
 
-    player1 = Player(BLUE, 10, 10)
     all_sprites_list.add(player1)
     player1.rect.x, player1.rect.y = lbound, ubound
     p1Trail = Player(BLUE2, 10, 10)
     block_list.add(p1Trail)
     all_sprites_list.add(p1Trail)
 
-    player2 = Player(RED, 10, 10)
     all_sprites_list.add(player2)
     player2.rect.x, player2.rect.y = rbound, dbound
     p2Trail = Player(RED2, 10, 10)
@@ -74,7 +72,6 @@ def resetBoard():
 
 
 def drawGame():
-
     # Draw game board grid
     for y_offset in range(0, 500, 10):
         pygame.draw.line(screen, BLACK, [0, 0 + y_offset], [500, 0 + y_offset])
@@ -84,7 +81,6 @@ def drawGame():
 def createTrailP1(px, py):
     p1Trail = Player(BLUE2, 10, 10)
     p1Trail.rect.x, p1Trail.rect.y = px, py
-    #print("PTX:", p1Trail.rect.x, "PTY:", p1Trail.rect.y)
     all_sprites_list.add(p1Trail)
     block_list.add(p1Trail)
 
@@ -128,7 +124,7 @@ def checkBounds():
 def player1Controller(inputMap, score1):
         # For human input, keep moving after button is pressed
     if inputMap[0]:
-            # Check if the player is out of bounds
+        # Check if the player is out of bounds
         checkBounds()
         # move player left
         player1.rect.x -= 10
@@ -142,7 +138,6 @@ def player1Controller(inputMap, score1):
             if block.rect.x == player1.rect.x:
                 # move the player back right
                 score1 += 1
-                player1.rect.x += 10
                 (inputMap, inputMap, player2.rect.x, player2.rect.y,
                  player1.rect.x, player1.rect.y) = resetBoard()
 
@@ -155,7 +150,6 @@ def player1Controller(inputMap, score1):
         for block in blocks_hit_list:
             if block.rect.x == player1.rect.x:
                 score1 += 1
-                player1.rect.x -= 10
                 (inputMap, inputMap, player2.rect.x, player2.rect.y,
                  player1.rect.x, player1.rect.y) = resetBoard()
 
@@ -168,7 +162,6 @@ def player1Controller(inputMap, score1):
         for block in blocks_hit_list:
             if block.rect.y == player1.rect.y:
                 score1 += 1
-                player1.rect.y += 10
                 (inputMap, inputMap, player2.rect.x, player2.rect.y,
                  player1.rect.x, player1.rect.y) = resetBoard()
 
@@ -181,7 +174,6 @@ def player1Controller(inputMap, score1):
         for block in blocks_hit_list:
             if block.rect.y == player1.rect.y:
                 score1 += 1
-                player1.rect.y -= 10
                 (inputMap, inputMap, player2.rect.x, player2.rect.y,
                  player1.rect.x, player1.rect.y) = resetBoard()
 
@@ -191,7 +183,7 @@ def player1Controller(inputMap, score1):
 def player2Controller(inputMap, score1):
         # For human input, keep moving after button is pressed
     if inputMap[0]:
-            # Check if the player is out of bounds
+        # Check if the player is out of bounds
         checkBounds()
         # move player left
         player2.rect.x -= 10
@@ -205,7 +197,6 @@ def player2Controller(inputMap, score1):
             if block.rect.x == player2.rect.x:
                 # move the player back right
                 score1 += 1
-                player2.rect.x += 10
                 (inputMap, inputMap, player2.rect.x, player2.rect.y,
                  player1.rect.x, player1.rect.y) = resetBoard()
 
@@ -218,7 +209,6 @@ def player2Controller(inputMap, score1):
         for block in blocks_hit_list:
             if block.rect.x == player2.rect.x:
                 score1 += 1
-                player2.rect.x -= 10
                 (inputMap, inputMap, player2.rect.x, player2.rect.y,
                  player1.rect.x, player1.rect.y) = resetBoard()
 
@@ -231,7 +221,6 @@ def player2Controller(inputMap, score1):
         for block in blocks_hit_list:
             if block.rect.y == player2.rect.y:
                 score1 += 1
-                player2.rect.y += 10
                 (inputMap, inputMap, player2.rect.x, player2.rect.y,
                  player1.rect.x, player1.rect.y) = resetBoard()
 
@@ -244,7 +233,6 @@ def player2Controller(inputMap, score1):
         for block in blocks_hit_list:
             if block.rect.y == player2.rect.y:
                 score1 += 1
-                player2.rect.y -= 10
                 (inputMap, inputMap, player2.rect.x, player2.rect.y,
                  player1.rect.x, player1.rect.y) = resetBoard()
 
