@@ -29,17 +29,11 @@ all_sprites_list = pygame.sprite.Group()
 
 player1 = Player(BLUE, 10, 10)
 all_sprites_list.add(player1)
-player1.rect.x, player1.rect.y = lbound, ubound
-p1Trail = Player(BLUE2, 10, 10)
-block_list.add(p1Trail)
-all_sprites_list.add(p1Trail)
+player1.rect.x, player1.rect.y = lbound, 250
 
 player2 = Player(RED, 10, 10)
 all_sprites_list.add(player2)
-player2.rect.x, player2.rect.y = rbound, dbound
-p2Trail = Player(RED2, 10, 10)
-block_list.add(p2Trail)
-all_sprites_list.add(p2Trail)
+player2.rect.x, player2.rect.y = rbound, 250
 
 
 def resetBoard():
@@ -50,25 +44,49 @@ def resetBoard():
         block_list.remove(block)
 
     all_sprites_list.add(player1)
-    player1.rect.x, player1.rect.y = lbound, ubound
-    p1Trail = Player(BLUE2, 10, 10)
-    block_list.add(p1Trail)
-    all_sprites_list.add(p1Trail)
+    player1.rect.x, player1.rect.y = lbound, 250
 
     all_sprites_list.add(player2)
-    player2.rect.x, player2.rect.y = rbound, dbound
-    p2Trail = Player(RED2, 10, 10)
-    block_list.add(p2Trail)
-    all_sprites_list.add(p2Trail)
+    player2.rect.x, player2.rect.y = rbound, 250
 
     screen.fill(WHITE)
     all_sprites_list.draw(screen)
     pygame.display.flip()
-    inputMap1 = [False, False, False, False]
-    inputMap2 = [False, False, False, False]
+    inputMap1 = [False, True, False, False]
+    inputMap2 = [True, False, False, False]
+
+    drawGame()
 
     return (inputMap1, inputMap2, player2.rect.x, player2.rect.y,
             player1.rect.x, player1.rect.y)
+
+
+def drawGameOverScreen(pWin):
+    done = False
+    diff = 0
+    font = pygame.font.SysFont(None, 50)
+    screen.fill(WHITE)
+    win = "Player " + pWin + " wins!"
+    items = ("GAME OVER", win, "Press Enter to continue...")
+    for item in items:
+        text = font.render(item, True, (0, 0, 0), (255, 255, 255))
+        textrect = text.get_rect()
+        pos_x = 250
+        pos_y = 100 + diff
+        textrect.centerx, textrect.centery = pos_x, pos_y
+        screen.blit(text, textrect)
+        diff += 100
+
+    pygame.display.flip()
+
+    while not done:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                done = True
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    return
 
 
 def drawGame():
@@ -121,8 +139,8 @@ def checkBounds():
     return False
 
 
-def player1Controller(inputMap, score1):
-        # For human input, keep moving after button is pressed
+def player1Controller(inputMap, inputMap2, score1):
+    # For human input, keep moving after button is pressed
     if inputMap[0]:
         # Check if the player is out of bounds
         checkBounds()
@@ -138,7 +156,8 @@ def player1Controller(inputMap, score1):
             if block.rect.x == player1.rect.x:
                 # move the player back right
                 score1 += 1
-                (inputMap, inputMap, player2.rect.x, player2.rect.y,
+                drawGameOverScreen("2")
+                (inputMap, inputMap2, player2.rect.x, player2.rect.y,
                  player1.rect.x, player1.rect.y) = resetBoard()
 
     elif inputMap[1]:
@@ -150,7 +169,8 @@ def player1Controller(inputMap, score1):
         for block in blocks_hit_list:
             if block.rect.x == player1.rect.x:
                 score1 += 1
-                (inputMap, inputMap, player2.rect.x, player2.rect.y,
+                drawGameOverScreen("2")
+                (inputMap, inputMap2, player2.rect.x, player2.rect.y,
                  player1.rect.x, player1.rect.y) = resetBoard()
 
     elif inputMap[2]:
@@ -162,7 +182,8 @@ def player1Controller(inputMap, score1):
         for block in blocks_hit_list:
             if block.rect.y == player1.rect.y:
                 score1 += 1
-                (inputMap, inputMap, player2.rect.x, player2.rect.y,
+                drawGameOverScreen("2")
+                (inputMap, inputMap2, player2.rect.x, player2.rect.y,
                  player1.rect.x, player1.rect.y) = resetBoard()
 
     elif inputMap[3]:
@@ -174,15 +195,16 @@ def player1Controller(inputMap, score1):
         for block in blocks_hit_list:
             if block.rect.y == player1.rect.y:
                 score1 += 1
-                (inputMap, inputMap, player2.rect.x, player2.rect.y,
+                drawGameOverScreen("2")
+                (inputMap, inputMap2, player2.rect.x, player2.rect.y,
                  player1.rect.x, player1.rect.y) = resetBoard()
 
-    return score1
+    return inputMap, inputMap2, score1
 
 
-def player2Controller(inputMap, score1):
-        # For human input, keep moving after button is pressed
-    if inputMap[0]:
+def player2Controller(inputMap, inputMap2, score1):
+    # For human input, keep moving after button is pressed
+    if inputMap2[0]:
         # Check if the player is out of bounds
         checkBounds()
         # move player left
@@ -197,10 +219,11 @@ def player2Controller(inputMap, score1):
             if block.rect.x == player2.rect.x:
                 # move the player back right
                 score1 += 1
-                (inputMap, inputMap, player2.rect.x, player2.rect.y,
+                drawGameOverScreen("1")
+                (inputMap, inputMap2, player2.rect.x, player2.rect.y,
                  player1.rect.x, player1.rect.y) = resetBoard()
 
-    elif inputMap[1]:
+    elif inputMap2[1]:
         checkBounds()
         player2.rect.x += 10
         createTrailP2(player2.rect.x - 10, player2.rect.y)
@@ -209,10 +232,11 @@ def player2Controller(inputMap, score1):
         for block in blocks_hit_list:
             if block.rect.x == player2.rect.x:
                 score1 += 1
-                (inputMap, inputMap, player2.rect.x, player2.rect.y,
+                drawGameOverScreen("1")
+                (inputMap, inputMap2, player2.rect.x, player2.rect.y,
                  player1.rect.x, player1.rect.y) = resetBoard()
 
-    elif inputMap[2]:
+    elif inputMap2[2]:
         checkBounds()
         player2.rect.y -= 10
         createTrailP2(player2.rect.x, player2.rect.y + 10)
@@ -221,10 +245,11 @@ def player2Controller(inputMap, score1):
         for block in blocks_hit_list:
             if block.rect.y == player2.rect.y:
                 score1 += 1
-                (inputMap, inputMap, player2.rect.x, player2.rect.y,
+                drawGameOverScreen("1")
+                (inputMap, inputMap2, player2.rect.x, player2.rect.y,
                  player1.rect.x, player1.rect.y) = resetBoard()
 
-    elif inputMap[3]:
+    elif inputMap2[3]:
         checkBounds()
         player2.rect.y += 10
         createTrailP2(player2.rect.x, player2.rect.y - 10)
@@ -233,16 +258,17 @@ def player2Controller(inputMap, score1):
         for block in blocks_hit_list:
             if block.rect.y == player2.rect.y:
                 score1 += 1
-                (inputMap, inputMap, player2.rect.x, player2.rect.y,
+                drawGameOverScreen("1")
+                (inputMap, inputMap2, player2.rect.x, player2.rect.y,
                  player1.rect.x, player1.rect.y) = resetBoard()
 
-    return score1
+    return inputMap, inputMap2, score1
 
-
-def main():
+#param mode for gamemode
+def main(mode):
     global done, p1_x, p1_y, p2_x, p2_y
-    inputMap1 = [False, False, False, False]
-    inputMap2 = [False, False, False, False]
+    inputMap1 = [False, True, False, False]
+    inputMap2 = [True, False, False, False]
 
     score1 = 0
     score2 = 0
@@ -255,50 +281,110 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 done = True
+            if mode == 1:
+                if event.type == pygame.KEYDOWN:
 
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LEFT:
-                    inputMap2 = [True, False, False, False]
-                    score1 = player2Controller(inputMap2, score1)
+                    # Player 2 control handling
+                    if(inputMap2 == [True, False, False, False] or
+                            inputMap2 == [False, True, False, False]):
+                        if event.key == pygame.K_UP:
+                            inputMap2 = [False, False, True, False]
+                            inputMap1, inputMap2, score1 = player2Controller(
+                                inputMap1, inputMap2, score1)
 
-                if event.key == pygame.K_RIGHT:
-                    inputMap2 = [False, True, False, False]
-                    score1 = player2Controller(inputMap2, score1)
+                        if event.key == pygame.K_DOWN:
+                            inputMap2 = [False, False, False, True]
+                            inputMap1, inputMap2, score1 = player2Controller(
+                                inputMap1, inputMap2, score1)
 
-                if event.key == pygame.K_UP:
-                    inputMap2 = [False, False, True, False]
-                    score1 = player2Controller(inputMap2, score1)
+                    elif(inputMap2 == [False, False, True, False] or
+                         inputMap2 == [False, False, False, True]):
+                        if event.key == pygame.K_LEFT:
+                            inputMap2 = [True, False, False, False]
+                            inputMap1, inputMap2, score1 = player2Controller(
+                                inputMap1, inputMap2, score1)
 
-                if event.key == pygame.K_DOWN:
-                    inputMap2 = [False, False, False, True]
-                    score1 = player2Controller(inputMap2, score1)
+                        if event.key == pygame.K_RIGHT:
+                            inputMap2 = [False, True, False, False]
+                            inputMap1, inputMap2, score1 = player2Controller(
+                                inputMap1, inputMap2, score1)
 
-                if event.key == pygame.K_a:
-                    inputMap1 = [True, False, False, True]
-                    score2 = player1Controller(inputMap1, score2)
+                    else:
+                        if event.key == pygame.K_LEFT:
+                            inputMap2 = [True, False, False, False]
+                            inputMap1, inputMap2, score1 = player2Controller(
+                                inputMap1, inputMap2, score1)
 
-                if event.key == pygame.K_d:
-                    inputMap1 = [False, True, False, True]
-                    score2 = player1Controller(inputMap1, score2)
+                        if event.key == pygame.K_RIGHT:
+                            inputMap2 = [False, True, False, False]
+                            inputMap1, inputMap2, score1 = player2Controller(
+                                inputMap1, inputMap2, score1)
 
-                if event.key == pygame.K_w:
-                    inputMap1 = [False, False, True, False]
-                    score2 = player1Controller(inputMap1, score2)
+                        if event.key == pygame.K_UP:
+                            inputMap2 = [False, False, True, False]
+                            inputMap1, inputMap2, score1 = player2Controller(
+                                inputMap1, inputMap2, score1)
 
-                if event.key == pygame.K_s:
-                    inputMap1 = [False, False, False, True]
-                    score2 = player1Controller(inputMap1, score2)
+                        if event.key == pygame.K_DOWN:
+                            inputMap2 = [False, False, False, True]
+                            inputMap1, inputMap2, score1 = player2Controller(
+                                inputMap1, inputMap2, score1)
 
-                if event.key == pygame.K_r:
-                    (inputMap1, inputMap2, player2.rect.x, player2.rect.y,
-                        player1.rect.x, player1.rect.y) = resetBoard()
+                    # Player 1 control handling
+                    if(inputMap1 == [True, False, False, False] or
+                            inputMap1 == [False, True, False, False]):
+                        if event.key == pygame.K_w:
+                            inputMap1 = [False, False, True, False]
+                            inputMap1, inputMap2, score2 = player1Controller(
+                                inputMap1, inputMap2, score2)
+
+                        if event.key == pygame.K_s:
+                            inputMap1 = [False, False, False, True]
+                            inputMap1, inputMap2, score2 = player1Controller(
+                                inputMap1, inputMap2, score2)
+
+                    elif(inputMap1 == [False, False, True, False] or
+                         inputMap1 == [False, False, False, True]):
+                        if event.key == pygame.K_a:
+                            inputMap1 = [True, False, False, False]
+                            inputMap1, inputMap2, score2 = player1Controller(
+                                inputMap1, inputMap2, score2)
+
+                        if event.key == pygame.K_d:
+                            inputMap1 = [False, True, False, False]
+                            inputMap1, inputMap2, score2 = player1Controller(
+                                inputMap1, inputMap2, score2)
+
+                    else:
+                        if event.key == pygame.K_a:
+                            inputMap1 = [True, False, False, False]
+                            inputMap1, inputMap2, score2 = player1Controller(
+                                inputMap1, inputMap2, score2)
+
+                        if event.key == pygame.K_d:
+                            inputMap1 = [False, True, False, False]
+                            inputMap1, inputMap2, score2 = player1Controller(
+                                inputMap1, inputMap2, score2)
+
+                        if event.key == pygame.K_w:
+                            inputMap1 = [False, False, True, False]
+                            inputMap1, inputMap2, score2 = player1Controller(
+                                inputMap1, inputMap2, score2)
+
+                        if event.key == pygame.K_s:
+                            inputMap1 = [False, False, False, True]
+                            inputMap1, inputMap2, score2 = player1Controller(
+                                inputMap1, inputMap2, score2)
+
+                    if event.key == pygame.K_r:
+                        drawGameOverScreen("1")
 
         '''if checkBounds() == True:
             if randMove == 1:
                 player1.rect.x += 10
                 createTrail(player1.rect.x-10, player1.rect.y)
                 checkBounds()
-                blocks_hit_list = pygame.sprite.spritecollide(player1, 
+                blocks_hit_list = pygame.sprite.spritecollide(player1,
                                     block_list, False)
                 for block in blocks_hit_list:
                     if block.rect.x == player1.rect.x:
@@ -307,7 +393,7 @@ def main():
                 player1.rect.y += 10
                 createTrail(player1.rect.x, player1.rect.y-10)
                 checkBounds()
-                blocks_hit_list = pygame.sprite.spritecollide(player1, 
+                blocks_hit_list = pygame.sprite.spritecollide(player1,
                                     block_list, False)
                 for block in blocks_hit_list:
                     if block.rect.y == player1.rect.y:
@@ -316,7 +402,7 @@ def main():
                 player1.rect.x -= 10
                 createTrail(player1.rect.x+10, player1.rect.y)
                 checkBounds()
-                blocks_hit_list = pygame.sprite.spritecollide(player1, 
+                blocks_hit_list = pygame.sprite.spritecollide(player1,
                                     block_list, False)
                 for block in blocks_hit_list:
                     if block.rect.x == player1.rect.x:
@@ -325,14 +411,17 @@ def main():
                 player1.rect.y -= 10
                 createTrail(player1.rect.x, player1.rect.y+10)
                 checkBounds()
-                blocks_hit_list = pygame.sprite.spritecollide(player1, 
+                blocks_hit_list = pygame.sprite.spritecollide(player1,
                                     block_list, False)
                 for block in blocks_hit_list:
                     if block.rect.y == player1.rect.y:
                         player1.rect.y += 10'''
 
-        score2 = player1Controller(inputMap1, score2)
-        score1 = player2Controller(inputMap2, score1)
+        inputMap1, inputMap2, score2 = player1Controller(
+            inputMap1, inputMap2, score2)
+
+        inputMap1, inputMap2, score1 = player2Controller(
+            inputMap1, inputMap2, score1)
 
         # Clear screen to white
         screen.fill(WHITE)
@@ -345,37 +434,34 @@ def main():
         # FPS
         clock.tick(11)
 
-    '''if __name__ == "__main__":
-        main()'''
+    if __name__ == "__main__":
+        main(mode)
 
     pygame.quit()
 
 
 ''' Add modes for AI. Currently:
-    1 = Player vs Random AI
-    2 = Player vs Wallhug AI
-    3 = Player vs Good AI
+	1 = Player vs Player
+    2 = Player vs Random AI
+    3 = Player vs Wallhug AI
+    4 = Player vs Good AI
 
-    4 = Random AI vs Random AI
-    5 = Random AI vs Wallhug AI
-    6 = Random AI vs Good AI
+    5 = Random AI vs Player
+    6 = Random AI vs Random AI
+    7 = Random AI vs Wallhug AI
+    8 = Random AI vs Good AI
 
-    7 = Wallhug AI vs Wallhug AI
-    8 = Wallhug AI vs Good AI
-    9 = Good AI vs Good AI
+    9 = Wallhug AI vs Player
+    10 = Wallhug AI vs Random AI
+    11 = Wallhug AI vs Wallhug AI
+    12 = Wallhug AI vs Good AI
+
+    13 = Good AI vs Player
+    14 = Good AI vs Random AI
+    15 = Good AI vs Wallhug AI
+    16 = Good AI vs Good AI
 
     ***SUBJECT TO CHANGE***
 '''
 
-
-def gameModes(modeNum):
-    if modeNum == 1:
-        qq = 1
-    elif modeNum == 2:
-        qq = 2
-    else:
-        qq = 3
-
-    main()
-
-main()
+#main()

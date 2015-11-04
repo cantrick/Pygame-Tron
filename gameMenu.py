@@ -5,7 +5,8 @@ pygame.init()
 
 class MenuItem(pygame.font.Font):
 
-    def __init__(self, text, font=None, font_size=30, font_color=(255, 255, 255), pos_x=0, pos_y=0):
+    def __init__(self, text, font=None, font_size=30,
+                 font_color=(255, 255, 255), pos_x=0, pos_y=0):
         pygame.font.Font.__init__(self, font, font_size)
         self.text = text
         self.font_size = font_size
@@ -27,7 +28,9 @@ class MenuItem(pygame.font.Font):
         self.label = self.render(self.text, 1, self.font_color)
 
     def is_mouse_selection(self, pos):
-        if (pos[0] >= self.pos_x and pos[0] <= self.pos_x + self.width) and (pos[1] >= self.pos_y and pos[1] <= self.pos_y + self.height):
+        if ((pos[0] >= self.pos_x and pos[0] <= self.pos_x + self.width)
+            and (pos[1] >= self.pos_y
+                 and pos[1] <= self.pos_y + self.height)):
             return True
         return False
 
@@ -83,11 +86,12 @@ def screen1():
                     if item.is_mouse_selection(mpos) and item.text == "Player":
                         done = True
                         screen2(1)
-                    elif (item.is_mouse_selection(mpos) 
-                        and item.text == "Random"):
+                    elif (item.is_mouse_selection(mpos)
+                          and item.text == "Random"):
                         done = True
                         screen2(2)
-                    elif item.is_mouse_selection(mpos) and item.text == "WallHug":
+                    elif (item.is_mouse_selection(mpos)
+                          and item.text == "WallHug"):
                         done = True
                         screen2(3)
                     elif item.is_mouse_selection(mpos) and item.text == "Good":
@@ -106,7 +110,8 @@ def screen1():
             screen.blit(item.label, item.position)
 
         screen.blit(
-            font2.render("Select who will play as Player 1:", 1, BLACK), (80, 10))
+            font2.render("Select who will play as Player 1:",
+                         1, BLACK), (80, 10))
         pygame.display.flip()
         clock.tick(30)
 
@@ -138,13 +143,20 @@ def screen2(firstOp):
                 for item in menuItems:
                     if item.is_mouse_selection(mpos) and item.text == "Player":
                         if firstOp == 1:
-                            print("firstop")
                             done = True
-                            tronMain.main()
-                    elif item.is_mouse_selection(mpos) and item.text == "Random":
+                            tronMain.main(1)
+                        elif firstOp == 2:
+                            done = True
+                            tronMain.main(2)
+                    elif (item.is_mouse_selection(mpos)
+                          and item.text == "Random"):
+                        if firstOp == 1:
+                            done = True
+                            tronMain.main(3)
                         done = True
                         screen2(2)
-                    elif item.is_mouse_selection(mpos) and item.text == "WallHug":
+                    elif (item.is_mouse_selection(mpos)
+                          and item.text == "WallHug"):
                         done = True
                         screen2(3)
                     elif item.is_mouse_selection(mpos) and item.text == "Good":
@@ -163,10 +175,36 @@ def screen2(firstOp):
             screen.blit(item.label, item.position)
 
         screen.blit(
-            font2.render("Select who will play as Player 2:", 1, BLACK), (80, 10))
+            font2.render("Select who will play as Player 2:",
+                         1, BLACK), (80, 10))
         pygame.display.flip()
         clock.tick(30)
 
 screen1()
+
+
+''' Add modes for AI. Currently:
+    1 = Player vs Player
+    2 = Player vs Random AI
+    3 = Player vs Wallhug AI
+    4 = Player vs Good AI
+
+    5 = Random AI vs Player
+    6 = Random AI vs Random AI
+    7 = Random AI vs Wallhug AI
+    8 = Random AI vs Good AI
+
+    9 = Wallhug AI vs Player
+    10 = Wallhug AI vs Random AI
+    11 = Wallhug AI vs Wallhug AI
+    12 = Wallhug AI vs Good AI
+
+    13 = Good AI vs Player
+    14 = Good AI vs Random AI
+    15 = Good AI vs Wallhug AI
+    16 = Good AI vs Good AI
+
+    ***SUBJECT TO CHANGE***
+'''
 
 pygame.quit()
