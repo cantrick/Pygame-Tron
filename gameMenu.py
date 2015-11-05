@@ -142,26 +142,22 @@ def screen2(firstOp):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 for item in menuItems:
                     if item.is_mouse_selection(mpos) and item.text == "Player":
-                        if firstOp == 1:
-                            done = True
-                            tronMain.main(1)
-                        elif firstOp == 2:
-                            done = True
-                            tronMain.main(2)
+                        done = True
+                        tronMain.main(firstOp,1)
+
                     elif (item.is_mouse_selection(mpos)
                           and item.text == "Random"):
-                        if firstOp == 1:
-                            done = True
-                            tronMain.main(3)
                         done = True
-                        screen2(2)
+                        tronMain.main(firstOp,2)
+
                     elif (item.is_mouse_selection(mpos)
                           and item.text == "WallHug"):
                         done = True
-                        screen2(3)
+                        tronMain.main(firstOp,3)
+
                     elif item.is_mouse_selection(mpos) and item.text == "Good":
                         done = True
-                        screen2(4)
+                        tronMain.main(firstOp,4)
 
         screen.fill(WHITE)
 
@@ -184,25 +180,25 @@ screen1()
 
 
 ''' Add modes for AI. Currently:
-    1 = Player vs Player
-    2 = Player vs Random AI
-    3 = Player vs Wallhug AI
-    4 = Player vs Good AI
+    1,1 = Player vs Player
+    1,2 = Player vs Random AI
+    1,3 = Player vs Wallhug AI
+    1,4 = Player vs Good AI
 
-    5 = Random AI vs Player
-    6 = Random AI vs Random AI
-    7 = Random AI vs Wallhug AI
-    8 = Random AI vs Good AI
+    2,1 = Random AI vs Player
+    2,2 = Random AI vs Random AI
+    2,3 = Random AI vs Wallhug AI
+    2,4 = Random AI vs Good AI
 
-    9 = Wallhug AI vs Player
-    10 = Wallhug AI vs Random AI
-    11 = Wallhug AI vs Wallhug AI
-    12 = Wallhug AI vs Good AI
+    3,1 = Wallhug AI vs Player
+    3,2 = Wallhug AI vs Random AI
+    3,3 = Wallhug AI vs Wallhug AI
+    3,4 = Wallhug AI vs Good AI
 
-    13 = Good AI vs Player
-    14 = Good AI vs Random AI
-    15 = Good AI vs Wallhug AI
-    16 = Good AI vs Good AI
+    4,1 = Good AI vs Player
+    4,2 = Good AI vs Random AI
+    4,3 = Good AI vs Wallhug AI
+    4,4 = Good AI vs Good AI
 
     ***SUBJECT TO CHANGE***
 '''
