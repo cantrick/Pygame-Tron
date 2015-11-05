@@ -318,25 +318,58 @@ def player2Controller(score1):
     return score1
 
 
+def isBlock(player):
+    possMove = []
+    blocks_hit_list = pygame.sprite.spritecollide(player,
+                                                          block_list, False)
+    left, right, up, down, = 0, 0, 0, 0
+    for block in blocks_hit_list:
+        # if there is a collision for going left
+        if block.rect.x == player.rect.x-10:
+            left = 1
+
+        if block.rect.x == player.rect.x+10:
+            right = 1
+
+        if block.rect.y == player.rect.y-10:
+            up = 1
+
+        if block.rect.y == player.rect.y+10:
+            down = 1
+
+        if left != 1:
+            possMove.add("LEFT")
+        if right != 1:
+            possMove.add("RIGHT")
+        if up != 1:
+            possMove.add("UP")
+        if down != 1:
+            possMove.add("DOWN")
+
+    return possMove
+
 def gameMode(score, p1mode, p2mode):
     global inputMap1, inputMap2
 
     if p1mode == 2:
         randMove = random.randint(1, 4)
+        possibleMoves = isBlock(player1)
 
-        if randMove == 1:
-            if (inputMap1 == [True, False, False, False] or
-                    inputMap1 == [False, True, False, False]):
-                pass
-            else:
-                inputMap1 = [True, False, False, False]
-
-        elif randMove == 2:
-            if (inputMap1 == [True, False, False, False] or
-                    inputMap1 == [False, True, False, False]):
-                pass
-            else:
-                inputMap1 = [False, True, False, False]
+        for x in possibleMoves:
+            if x == "LEFT":
+                if randMove == 1:
+                    if (inputMap1 == [True, False, False, False] or
+                            inputMap1 == [False, True, False, False]):
+                        pass
+                    else:
+                        inputMap1 = [True, False, False, False]
+            elif x == "RIGHT":
+                elif randMove == 2:
+                    if (inputMap1 == [True, False, False, False] or
+                            inputMap1 == [False, True, False, False]):
+                        pass
+                    else:
+                        inputMap1 = [False, True, False, False]
 
         elif randMove == 3:
             if (inputMap1 == [False, False, True, False] or
