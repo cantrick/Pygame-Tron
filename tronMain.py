@@ -318,107 +318,245 @@ def player2Controller(score1):
     return score1
 
 
-def isBlock(player):
+def posMoves(player):
     possMove = []
-    blocks_hit_list = pygame.sprite.spritecollide(player,
-                                                          block_list, False)
+
     left, right, up, down, = 0, 0, 0, 0
-    for block in blocks_hit_list:
+    print(possMove, "BEFOREO")
+    for block in all_sprites_list:
         # if there is a collision for going left
-        if block.rect.x == player.rect.x-10:
+        if (block.rect.x == player.rect.x - 10 and
+                block.rect.y == player.rect.y):
             left = 1
+            print("THERE IS A WALL TO MY LEFT")
 
-        if block.rect.x == player.rect.x+10:
+        if (block.rect.x == player.rect.x + 10 and
+                block.rect.y == player.rect.y):
             right = 1
+            print("WALL TO THE RIGHT")
 
-        if block.rect.y == player.rect.y-10:
+        if (block.rect.y == player.rect.y - 10 and
+                block.rect.x == player.rect.x):
             up = 1
+            print("WALL UP")
 
-        if block.rect.y == player.rect.y+10:
+        if (block.rect.y == player.rect.y + 10 and
+                block.rect.x == player.rect.x):
             down = 1
+            print("DOWN DOWN DOWN")
 
-        if left != 1:
-            possMove.add("LEFT")
-        if right != 1:
-            possMove.add("RIGHT")
-        if up != 1:
-            possMove.add("UP")
-        if down != 1:
-            possMove.add("DOWN")
+    print(left, right, up, down, "BEFOR BOUNDS")
 
+    if player.rect.x - 10 < lbound:
+        left = 1
+        print("LBOUND")
+
+    if player.rect.x + 10 > rbound:
+        right = 1
+        print("RBOUND")
+
+    if player.rect.y - 10 < ubound:
+        up = 1
+        print("UBOUND")
+
+    if player.rect.y + 10 > dbound:
+        down = 1
+        print("DBOUND")
+
+    print(left, right, up, down)
+
+    if left != 1:
+        possMove.append("LEFT")
+    if right != 1:
+        possMove.append("RIGHT")
+    if up != 1:
+        possMove.append("UP")
+    if down != 1:
+        possMove.append("DOWN")
+
+    print(possMove, "AFTEROR")
     return possMove
+
 
 def gameMode(score, p1mode, p2mode):
     global inputMap1, inputMap2
 
     if p1mode == 2:
-        randMove = random.randint(1, 4)
-        possibleMoves = isBlock(player1)
+        randMove = random.randint(0, 2)
+        possibleMoves = posMoves(player1)
+        print(possibleMoves)
+        while randMove >= len(possibleMoves):
+            randMove = random.randint(0, 2)
+            if possibleMoves == []:
+                break
 
-        for x in possibleMoves:
-            if x == "LEFT":
-                if randMove == 1:
+        print(randMove)
+
+        if possibleMoves != []:
+            if possibleMoves[randMove] == "LEFT":
+                if (inputMap1 == [True, False, False, False] or
+                        inputMap1 == [False, True, False, False]):
+                    pass
+                else:
+                    inputMap1 = [True, False, False, False]
+
+            elif possibleMoves[randMove] == "RIGHT":
+                if (inputMap1 == [True, False, False, False] or
+                        inputMap1 == [False, True, False, False]):
+                    pass
+                else:
+                    inputMap1 = [False, True, False, False]
+
+            elif possibleMoves[randMove] == "UP":
+                if (inputMap1 == [False, False, True, False] or
+                        inputMap1 == [False, False, False, True]):
+                    pass
+                else:
+                    inputMap1 = [False, False, True, False]
+
+            elif possibleMoves[randMove] == "DOWN":
+                if (inputMap1 == [False, False, True, False] or
+                        inputMap1 == [False, False, False, True]):
+                    pass
+                else:
+                    inputMap1 = [False, False, False, True]
+
+    if p1mode == 5:
+        order = ["RIGHT", "DOWN", "UP", "LEFT"]
+        possibleMoves = posMoves(player1)
+        print(possibleMoves)
+
+        for x in order:
+            for y in possibleMoves:
+                print("X", x, "Y", y)
+                if x == "UP" and x == y:
+                    if (inputMap1 == [False, False, True, False] or
+                            inputMap1 == [False, False, False, True]):
+                        return score
+                    else:
+                        inputMap1 = [False, False, True, False]
+                        print(inputMap1)
+                        print("GOIN UP")
+                        return score
+
+                elif x == "DOWN" and x == y:
+                    if (inputMap1 == [False, False, True, False] or
+                            inputMap1 == [False, False, False, True]):
+                        return score
+                    else:
+                        inputMap1 = [False, False, False, True]
+                        print("GOIN DOWN")
+                        return score
+
+                elif x == "LEFT" and x == y:
                     if (inputMap1 == [True, False, False, False] or
                             inputMap1 == [False, True, False, False]):
-                        pass
+                        return score
                     else:
                         inputMap1 = [True, False, False, False]
-            elif x == "RIGHT":
-                elif randMove == 2:
+                        print("GOIN LEFT")
+                        return score
+
+                elif x == "RIGHT" and x == y:
                     if (inputMap1 == [True, False, False, False] or
                             inputMap1 == [False, True, False, False]):
-                        pass
+                        return score
                     else:
                         inputMap1 = [False, True, False, False]
-
-        elif randMove == 3:
-            if (inputMap1 == [False, False, True, False] or
-                    inputMap1 == [False, False, False, True]):
-                pass
-            else:
-                inputMap1 = [False, False, True, False]
-
-        elif randMove == 4:
-            if (inputMap1 == [False, False, True, False] or
-                    inputMap1 == [False, False, False, True]):
-                pass
-            else:
-                inputMap1 = [False, False, False, True]
-
+                        print("GOIN RITE")
+                        return score
+    # Random AI
     if p2mode == 2:
-        randMove = random.randint(1, 4)
+        randMove = random.randint(0, 2)
+        possibleMoves = posMoves(player2)
+        print(possibleMoves)
+        while randMove >= len(possibleMoves):
+            randMove = random.randint(0, 2)
+            if possibleMoves == []:
+                break
 
-        if randMove == 1:
-            if (inputMap2 == [True, False, False, False] or
-                    inputMap2 == [False, True, False, False]):
-                pass
-            else:
-                inputMap2 = [True, False, False, False]
+        print(randMove)
 
-        elif randMove == 2:
-            if (inputMap2 == [True, False, False, False] or
-                    inputMap2 == [False, True, False, False]):
-                pass
-            else:
-                inputMap2 = [False, True, False, False]
+        if possibleMoves != []:
+            if possibleMoves[randMove] == "LEFT":
+                if (inputMap2 == [True, False, False, False] or
+                        inputMap2 == [False, True, False, False]):
+                    pass
+                else:
+                    inputMap2 = [True, False, False, False]
 
-        elif randMove == 3:
-            if (inputMap2 == [False, False, True, False] or
-                    inputMap2 == [False, False, False, True]):
-                pass
-            else:
-                inputMap2 = [False, False, True, False]
+            elif possibleMoves[randMove] == "RIGHT":
+                if (inputMap2 == [True, False, False, False] or
+                        inputMap2 == [False, True, False, False]):
+                    pass
+                else:
+                    inputMap2 = [False, True, False, False]
 
-        elif randMove == 4:
-            if (inputMap2 == [False, False, True, False] or
-                    inputMap2 == [False, False, False, True]):
-                pass
-            else:
-                inputMap2 = [False, False, False, True]
+            elif possibleMoves[randMove] == "UP":
+                if (inputMap2 == [False, False, True, False] or
+                        inputMap2 == [False, False, False, True]):
+                    pass
+                else:
+                    inputMap2 = [False, False, True, False]
+
+            elif possibleMoves[randMove] == "DOWN":
+                if (inputMap2 == [False, False, True, False] or
+                        inputMap2 == [False, False, False, True]):
+                    pass
+                else:
+                    inputMap2 = [False, False, False, True]
+
+    # Ordered Selection AI. Goes in the order given.
+    if p2mode == 5:
+        order = ["DOWN", "RIGHT", "LEFT", "UP"]
+        possibleMoves = posMoves(player2)
+        print(possibleMoves)
+
+        for x in order:
+            for y in possibleMoves:
+                print("X", x, "Y", y)
+                if x == "UP" and x == y:
+                    if (inputMap2 == [False, False, True, False] or
+                            inputMap2 == [False, False, False, True]):
+                        return score
+                    else:
+                        inputMap2 = [False, False, True, False]
+                        print(inputMap2)
+                        print("GOIN UP")
+                        return score
+
+                elif x == "DOWN" and x == y:
+                    if (inputMap2 == [False, False, True, False] or
+                            inputMap2 == [False, False, False, True]):
+                        return score
+                    else:
+                        inputMap2 = [False, False, False, True]
+                        print("GOIN DOWN")
+                        return score
+
+                elif x == "LEFT" and x == y:
+                    if (inputMap2 == [True, False, False, False] or
+                            inputMap2 == [False, True, False, False]):
+                        return score
+                    else:
+                        inputMap2 = [True, False, False, False]
+                        print("GOIN LEFT")
+                        return score
+
+                elif x == "RIGHT" and x == y:
+                    if (inputMap2 == [True, False, False, False] or
+                            inputMap2 == [False, True, False, False]):
+                        return score
+                    else:
+                        inputMap2 = [False, True, False, False]
+                        print("GOIN RITE")
+                        return score
 
     return score
 
 # param mode for game mode
+
+
 def main(p1mode, p2mode):
     global done, p1_x, p1_y, p2_x, p2_y, inputMap1, inputMap2
 
@@ -435,8 +573,7 @@ def main(p1mode, p2mode):
 
             if event.type == pygame.KEYDOWN:
                 if p2mode == 1:
-
-                # Player 2 control handling
+                    # Player 2 control handling
                     if(inputMap2 == [True, False, False, False] or
                             inputMap2 == [False, True, False, False]):
                         if event.key == pygame.K_UP:
@@ -517,10 +654,10 @@ def main(p1mode, p2mode):
                         drawGameOverScreen("1")
 
         if p1mode != 1:
-        	score2 = gameMode(score2, p1mode, 0)
+            score2 = gameMode(score2, p1mode, 0)
 
         if p2mode != 1:
-        	score1 = gameMode(score1, 0, p2mode)
+            score1 = gameMode(score1, 0, p2mode)
 
         score2 = player1Controller(score2)
         score1 = player2Controller(score1)
