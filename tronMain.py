@@ -1,6 +1,7 @@
 # Tron made using Pygame
 import pygame
 import random
+import gameMenu
 from Player import Player
 pygame.init()
 
@@ -70,7 +71,8 @@ def drawGameOverScreen(pWin):
     font = pygame.font.SysFont(None, 50)
     screen.fill(WHITE)
     win = "Player " + pWin + " wins!"
-    items = ("GAME OVER", win, "Press Enter to continue...")
+    items = ("GAME OVER", win, "Press Enter to go again...",
+             "Press R for different players...")
     for item in items:
         text = font.render(item, True, (0, 0, 0), (255, 255, 255))
         textrect = text.get_rect()
@@ -90,6 +92,11 @@ def drawGameOverScreen(pWin):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
                     return
+
+                if event.key == pygame.K_r:
+                    (inputMap1, inputMap2, player2.rect.x, player2.rect.y,
+                     player1.rect.x, player1.rect.y) = resetBoard()
+                    gameMenu.main()
 
 
 def drawGame():
@@ -421,6 +428,11 @@ def gameMode(score, p1mode, p2mode):
                 else:
                     inputMap1 = [False, False, False, True]
 
+    if p1mode == 3:
+        # hug the walls?
+        # HOW?
+        return
+
     if p1mode == 5:
         order = ["RIGHT", "DOWN", "UP", "LEFT"]
         possibleMoves = posMoves(player1)
@@ -649,9 +661,6 @@ def main(p1mode, p2mode):
                         if event.key == pygame.K_s:
                             inputMap1 = [False, False, False, True]
                             score2 = player1Controller(score2)
-
-                    if event.key == pygame.K_r:
-                        drawGameOverScreen("1")
 
         if p1mode != 1:
             score2 = gameMode(score2, p1mode, 0)

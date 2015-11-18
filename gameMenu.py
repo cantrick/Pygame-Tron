@@ -57,7 +57,7 @@ def initScreen():
     return screen
 
 
-def screen1():
+def main():
     screen = initScreen()
 
     # Loop until the user clicks the close button.
@@ -118,6 +118,9 @@ def screen1():
                          1, BLACK), (80, 10))
         pygame.display.flip()
         clock.tick(30)
+
+        if __name__ == "__main__":
+            main()
 
 
 def screen2(firstOp):
@@ -185,7 +188,7 @@ def screen2(firstOp):
         pygame.display.flip()
         clock.tick(30)
 
-screen1()
+main()
 
 
 ''' Add modes for AI. Currently:
