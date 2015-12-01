@@ -401,14 +401,14 @@ def hasWalls(dir, player):
                 return 1
     elif dir == "UP":
         for block in all_sprites_list:
-            if (block.rect.x == player.rect.x - 10
+            if (block.rect.x == player.rect.x
                 and block.rect.y == player.rect.y - 10) or (block.rect.x == player.rect.x + 10
                 and block.rect.y == player.rect.y - 10):
                 print("HAS WALLS UP")
                 return 1
     elif dir == "DOWN":
         for block in all_sprites_list:
-            if (block.rect.x == player.rect.x - 10
+            if (block.rect.x == player.rect.x
                 and block.rect.y == player.rect.y + 10) or (block.rect.x == player.rect.x + 10
                 and block.rect.y == player.rect.y + 10):
                 print("HAS WALLS DOWN")
@@ -459,7 +459,7 @@ def gameMode(score, p1mode, p2mode):
 
     if p1mode == 3:
         possibleMoves = posMoves(player1)
-        random.shuffle(possibleMoves)
+        #random.shuffle(possibleMoves)
 
         for move in possibleMoves:
             print(move, hasWalls(move,player1), "CONT")
