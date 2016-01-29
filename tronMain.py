@@ -1,6 +1,8 @@
 # Tron made using Pygame
+# Here is a change
 import pygame
 import random
+import gameMenu
 from Player import Player
 pygame.init()
 
@@ -70,7 +72,8 @@ def drawGameOverScreen(pWin):
     font = pygame.font.SysFont(None, 50)
     screen.fill(WHITE)
     win = "Player " + pWin + " wins!"
-    items = ("GAME OVER", win, "Press Enter to continue...")
+    items = ("GAME OVER", win, "Press Enter to go again...",
+             "Press R for different players...")
     for item in items:
         text = font.render(item, True, (0, 0, 0), (255, 255, 255))
         textrect = text.get_rect()
@@ -90,6 +93,11 @@ def drawGameOverScreen(pWin):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
                     return
+
+                if event.key == pygame.K_r:
+                    (inputMap1, inputMap2, player2.rect.x, player2.rect.y,
+                     player1.rect.x, player1.rect.y) = resetBoard()
+                    gameMenu.main()
 
 
 def drawGame():
@@ -377,6 +385,35 @@ def posMoves(player):
     print(possMove, "AFTEROR")
     return possMove
 
+def hasWalls(dir, player):
+    if dir == "LEFT":
+        for block in all_sprites_list:
+            if (block.rect.x == player.rect.x - 10
+                and block.rect.y == player.rect.y - 10) or (block.rect.x == player.rect.x - 10
+                and block.rect.y == player.rect.y + 10) or (player.rect.x - 10 <= lbound):
+                print("HAS WALLS LEFT")
+                return 1
+    elif dir == "RIGHT":
+        for block in all_sprites_list:
+            if (block.rect.x == player.rect.x + 10
+                and block.rect.y == player.rect.y - 10) or (block.rect.x == player.rect.x + 10
+                and block.rect.y == player.rect.y + 10):
+                print("HAS WALLS RIGHT")
+                return 1
+    elif dir == "UP":
+        for block in all_sprites_list:
+            if (block.rect.x == player.rect.x
+                and block.rect.y == player.rect.y - 10) or (block.rect.x == player.rect.x + 10
+                and block.rect.y == player.rect.y - 10):
+                print("HAS WALLS UP")
+                return 1
+    elif dir == "DOWN":
+        for block in all_sprites_list:
+            if (block.rect.x == player.rect.x
+                and block.rect.y == player.rect.y + 10) or (block.rect.x == player.rect.x + 10
+                and block.rect.y == player.rect.y + 10):
+                print("HAS WALLS DOWN")
+                return 1
 
 def gameMode(score, p1mode, p2mode):
     global inputMap1, inputMap2
@@ -420,6 +457,26 @@ def gameMode(score, p1mode, p2mode):
                     pass
                 else:
                     inputMap1 = [False, False, False, True]
+
+    if p1mode == 3:
+        possibleMoves = posMoves(player1)
+        #random.shuffle(possibleMoves)
+
+        for move in possibleMoves:
+            print(move, hasWalls(move,player1), "CONT")
+            if hasWalls(move,player1) == 1:
+                if move == "LEFT":
+                    inputMap1 = [True, False, False, False]
+                    break
+                elif move == "RIGHT":
+                    inputMap1 = [False, True, False, False]
+                    break
+                elif move == "UP":
+                    inputMap1 = [False, False, True, False]
+                    break
+                elif move == "DOWN":
+                    inputMap1 = [False, False, False, True]
+                    break
 
     if p1mode == 5:
         order = ["RIGHT", "DOWN", "UP", "LEFT"]
@@ -505,6 +562,24 @@ def gameMode(score, p1mode, p2mode):
                     pass
                 else:
                     inputMap2 = [False, False, False, True]
+    if p2mode == 3:
+        possibleMoves = posMoves(player2)
+        random.shuffle(possibleMoves)
+
+        for move in possibleMoves:
+            if hasWalls(move,player2) == 1:
+                if move == "LEFT":
+                    inputMap1 = [True, False, False, False]
+                    break
+                elif move == "RIGHT":
+                    inputMap1 = [False, True, False, False]
+                    break
+                elif move == "UP":
+                    inputMap1 = [False, False, True, False]
+                    break
+                elif move == "DOWN":
+                    inputMap1 = [False, False, False, True]
+                    break
 
     # Ordered Selection AI. Goes in the order given.
     if p2mode == 5:
@@ -649,9 +724,6 @@ def main(p1mode, p2mode):
                         if event.key == pygame.K_s:
                             inputMap1 = [False, False, False, True]
                             score2 = player1Controller(score2)
-
-                    if event.key == pygame.K_r:
-                        drawGameOverScreen("1")
 
         if p1mode != 1:
             score2 = gameMode(score2, p1mode, 0)
